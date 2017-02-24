@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.zhangmiao.hailiao.ConversationFragment;
@@ -32,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
         mSPMnager = new SharedPreferencesDBManager(this);
         User currentUser = mSPMnager.readData();
-        if(currentUser == null){
-            startActivity(new Intent(MainActivity.this,LoginActivity.class));
+        if (currentUser == null) {
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         }
 
@@ -54,6 +55,22 @@ public class MainActivity extends AppCompatActivity {
             tabs.setupWithViewPager(viewPager);
         }
 
+        TabLayout.Tab one;
+        TabLayout.Tab two;
+        TabLayout.Tab three;
+
+        one = tabs.getTabAt(0);
+        two = tabs.getTabAt(1);
+        three = tabs.getTabAt(2);
+
+        one.setIcon(R.mipmap.ic_launcher);
+        three.setIcon(R.mipmap.ic_launcher);
+
+        View view = View.inflate(this, R.layout.tab, null);
+        TextView textView = (TextView) view.findViewById(R.id.tab_text);
+        textView.setText("通讯录");
+
+        two.setCustomView(view);
     }
 
     public class MyPagerAdapter extends FragmentPagerAdapter {

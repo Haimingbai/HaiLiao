@@ -37,7 +37,8 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <activity android:name=".UI.MainActivity">
+        <activity android:name=".UI.MainActivity"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,6 +47,7 @@
         </activity>
         <activity android:name=".UI.RegisterActivity" />
         <activity android:name=".UI.LoginActivity" />
+        <activity android:name=".UI.AddFriendActivity" />
     </application>
 
 </manifest>

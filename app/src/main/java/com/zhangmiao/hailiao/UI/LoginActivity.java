@@ -71,7 +71,7 @@ public class LoginActivity extends Activity {
                     EMClient.getInstance().chatManager().loadAllConversations();
                     Log.e("test", "login success");
 
-                    User user = new User(username,password);
+                    User user = new User(username, password);
                     mSPMnager.writeData(user);
 
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
