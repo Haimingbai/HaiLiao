@@ -1,18 +1,20 @@
 package com.zhangmiao.hailiao.UI;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.zhangmiao.hailiao.R;
+import com.zhangmiao.hailiao.SharedPreferencesDBManager;
+import com.zhangmiao.hailiao.User;
 
 /**
  * Created by zhangmiao on 2017/2/23.
@@ -21,6 +23,7 @@ public class LoginActivity extends Activity {
 
     private EditText mUsernameET;
     private EditText mPasswordET;
+    public SharedPreferencesDBManager mSPMnager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,8 @@ public class LoginActivity extends Activity {
             mUsernameET.setText(username);
             mPasswordET.setText(password);
         }
+
+        mSPMnager = new SharedPreferencesDBManager(this);
     }
 
     private View.OnClickListener registerListener = new View.OnClickListener() {
@@ -56,8 +61,8 @@ public class LoginActivity extends Activity {
         @Override
         public void onClick(View v) {
 
-            String username = mUsernameET.getText().toString();
-            String password = mPasswordET.getText().toString();
+            final String username = mUsernameET.getText().toString();
+            final String password = mPasswordET.getText().toString();
 
             EMClient.getInstance().login(username, password, new EMCallBack() {
                 @Override
@@ -65,6 +70,10 @@ public class LoginActivity extends Activity {
                     EMClient.getInstance().groupManager().loadAllGroups();
                     EMClient.getInstance().chatManager().loadAllConversations();
                     Log.e("test", "login success");
+
+                    User user = new User(username,password);
+                    mSPMnager.writeData(user);
+
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 }
 
@@ -81,6 +90,5 @@ public class LoginActivity extends Activity {
             });
         }
     };
-
 
 }
