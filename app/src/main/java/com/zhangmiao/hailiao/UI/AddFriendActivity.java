@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
@@ -37,10 +38,12 @@ public class AddFriendActivity extends Activity {
                 String userName = userNameEt.getText().toString();
                 String reason = reasonEt.getText().toString();
                 EMClient.getInstance().contactManager().addContact(userName, reason);
+                Toast.makeText(AddFriendActivity.this,"请求已发送等待对方同意！",Toast.LENGTH_SHORT);
+                finish();
             } catch (HyphenateException e) {
                 Log.e("test", "errorCode = " + e.getErrorCode());
+                Toast.makeText(AddFriendActivity.this,"添加好友失败！",Toast.LENGTH_SHORT);
             }
-            finish();
         }
     };
 }

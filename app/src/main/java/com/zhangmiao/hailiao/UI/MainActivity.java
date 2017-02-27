@@ -63,14 +63,21 @@ public class MainActivity extends AppCompatActivity {
         two = tabs.getTabAt(1);
         three = tabs.getTabAt(2);
 
-        one.setIcon(R.mipmap.ic_launcher);
-        three.setIcon(R.mipmap.ic_launcher);
+        View mailListTab = View.inflate(this, R.layout.tab, null);
+        TextView mailListTextView = (TextView)mailListTab.findViewById(R.id.tab_text);
+        mailListTextView.setText("通讯录");
 
-        View view = View.inflate(this, R.layout.tab, null);
-        TextView textView = (TextView) view.findViewById(R.id.tab_text);
-        textView.setText("通讯录");
+        View conversationTab = View.inflate(this,R.layout.tab,null);
+        TextView conversationTextView = (TextView)conversationTab.findViewById(R.id.tab_text);
+        conversationTextView.setText("会话");
 
-        two.setCustomView(view);
+        View setUpTab = View.inflate(this,R.layout.tab,null);
+        TextView setUpTextView = (TextView)setUpTab.findViewById(R.id.tab_text);
+        setUpTextView.setText("设置");
+
+        one.setCustomView(conversationTab);
+        two.setCustomView(mailListTab);
+        three.setCustomView(setUpTab);
     }
 
     public class MyPagerAdapter extends FragmentPagerAdapter {

@@ -10,14 +10,18 @@
         android:layout_gravity="center_horizontal">
 
         <ImageView
+            android:id="@+id/tab_flag_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_launcher" />
 
         <ImageView
+            android:id="@+id/tab_red_iv"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:src="@drawable/em_unread_count_bg" />
+            android:src="@drawable/em_unread_count_bg"
+            android:visibility="invisible"
+            />
     </FrameLayout>
 
 
