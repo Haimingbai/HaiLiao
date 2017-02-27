@@ -20,10 +20,8 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:src="@drawable/em_unread_count_bg"
-            android:visibility="invisible"
-            />
+            android:visibility="invisible" />
     </FrameLayout>
-
 
     <TextView
         android:id="@+id/tab_text"

@@ -21,6 +21,7 @@ import com.hyphenate.EMContactListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.zhangmiao.hailiao.UI.AddFriendActivity;
+import com.zhangmiao.hailiao.UI.ChatActivity;
 import com.zhangmiao.hailiao.UI.NotificationActivity;
 
 import java.util.ArrayList;
@@ -33,15 +34,6 @@ import java.util.Map;
  */
 public class MailListFragment extends Fragment {
 
-    public static final String CONTACT_INVITED = "contact_invited";
-    public static final String CONTACT_ADDED = "contact_added";
-    public static final String CONTACT_DELECTED = "contact_delected";
-    public static final String FRIEND_REQUEST_ACCEPTED = "FriendRequestAccepted";
-    public static final String FRIEND_REQUEST_DECLINED = "FriendRequestDeclined";
-
-    private LinearLayout mAddFriendLL;
-
-    private LinearLayout mApplicationAndNotificationLL;
     private ImageView mApplicationAndNotificationRedFlag;
 
     private ListView mFriendListLV;
@@ -50,16 +42,16 @@ public class MailListFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.mail_list, container, false);
 
         sNotification = new ArrayList<>();
 
-        mAddFriendLL = (LinearLayout) view.findViewById(R.id.add_friend_ll);
+        LinearLayout mAddFriendLL = (LinearLayout) view.findViewById(R.id.add_friend_ll);
         mAddFriendLL.setOnClickListener(addFriendListener);
 
         mApplicationAndNotificationRedFlag = (ImageView) view.findViewById(R.id.application_notification_red_iv);
-        mApplicationAndNotificationLL = (LinearLayout) view.findViewById(R.id.application_notification_ll);
+        LinearLayout mApplicationAndNotificationLL = (LinearLayout) view.findViewById(R.id.application_notification_ll);
         mApplicationAndNotificationLL.setOnClickListener(applicationAndNotificationListener);
 
         setFriendListener();
@@ -70,24 +62,27 @@ public class MailListFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    final List<String> friendsList = EMClient.getInstance().contactManager().getAllContactsFromServer();
+                    List<String> friendsList = EMClient.getInstance().contactManager().getAllContactsFromServer();
+                    final String[] dataList = friendsList.toArray(new String[0]);
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mFriendListLV.setAdapter(new ArrayAdapter<String>(
+                            mFriendListLV.setAdapter(new ArrayAdapter<>(
                                     getContext(),
                                     android.R.layout.simple_expandable_list_item_1,
-                                    friendsList
+                                    dataList
                             ));
                             mFriendListLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                                    Intent intent = new Intent();
+                                    intent.putExtra("friendname", dataList[position]);
+                                    intent.setClass(getContext(), ChatActivity.class);
+                                    startActivity(intent);
                                 }
                             });
                         }
                     });
-
                 } catch (HyphenateException e) {
                     e.printStackTrace();
                     Log.e("test", " ErrorCode = " + e.getErrorCode());
@@ -144,7 +139,6 @@ public class MailListFragment extends Fragment {
                 Log.e("test", "s = " + s + " , s1 = " + s1);
                 //在这里处理好友添加
                 //mApplicationAndNotificationRedFlag.setVisibility(View.VISIBLE);
-                String message = s + "," + s1;
                 Map<String, String> map = new HashMap<>();
                 map.put("message", "加个好友呗");
                 map.put("username", s);

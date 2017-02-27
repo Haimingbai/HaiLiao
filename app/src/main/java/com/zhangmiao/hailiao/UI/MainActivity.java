@@ -64,15 +64,15 @@ public class MainActivity extends AppCompatActivity {
         three = tabs.getTabAt(2);
 
         View mailListTab = View.inflate(this, R.layout.tab, null);
-        TextView mailListTextView = (TextView)mailListTab.findViewById(R.id.tab_text);
+        TextView mailListTextView = (TextView) mailListTab.findViewById(R.id.tab_text);
         mailListTextView.setText("通讯录");
 
-        View conversationTab = View.inflate(this,R.layout.tab,null);
-        TextView conversationTextView = (TextView)conversationTab.findViewById(R.id.tab_text);
+        View conversationTab = View.inflate(this, R.layout.tab, null);
+        TextView conversationTextView = (TextView) conversationTab.findViewById(R.id.tab_text);
         conversationTextView.setText("会话");
 
-        View setUpTab = View.inflate(this,R.layout.tab,null);
-        TextView setUpTextView = (TextView)setUpTab.findViewById(R.id.tab_text);
+        View setUpTab = View.inflate(this, R.layout.tab, null);
+        TextView setUpTextView = (TextView) setUpTab.findViewById(R.id.tab_text);
         setUpTextView.setText("设置");
 
         one.setCustomView(conversationTab);
