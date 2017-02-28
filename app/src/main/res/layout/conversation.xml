@@ -5,8 +5,15 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/conversation_show"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="conversation" />
+
+    <ListView
+        android:id="@+id/conversation_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"></ListView>
 
 </LinearLayout>
