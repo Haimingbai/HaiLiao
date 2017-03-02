@@ -16,7 +16,7 @@ import com.zhangmiao.hailiao.R;
 import com.zhangmiao.hailiao.SharedPreferencesDBManager;
 import com.zhangmiao.hailiao.User;
 
-/**
+/*
  * Created by zhangmiao on 2017/2/23.
  */
 public class LoginActivity extends Activity {

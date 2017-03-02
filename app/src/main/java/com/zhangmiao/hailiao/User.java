@@ -1,6 +1,6 @@
 package com.zhangmiao.hailiao;
 
-/**
+/*
  * Created by zhangmiao on 2017/2/24.
  */
 public class User {

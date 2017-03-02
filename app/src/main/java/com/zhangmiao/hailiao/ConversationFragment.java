@@ -2,53 +2,37 @@ package com.zhangmiao.hailiao;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.style.TtsSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
-import com.hyphenate.chat.EMFileMessageBody;
-import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
-import com.hyphenate.easeui.model.EaseImageCache;
-import com.hyphenate.easeui.utils.EaseCommonUtils;
-import com.hyphenate.easeui.utils.EaseImageUtils;
-import com.zhangmiao.hailiao.R;
 import com.zhangmiao.hailiao.UI.ChatActivity;
 
-import java.io.File;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
-/**
+/*
  * Created by zhangmiao on 2017/2/24.
  */
 public class ConversationFragment extends Fragment {
 
-    private ListView mConversationListView;
     private Map<String, EMConversation> mConversations;
-    private TextView textView;
     ConversationListAdapter adapter;
     private List<String> mConversationUserNames;
 
@@ -57,9 +41,9 @@ public class ConversationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.conversation, container, false);
 
-        textView = (TextView) view.findViewById(R.id.conversation_show);
+        TextView textView = (TextView) view.findViewById(R.id.conversation_show);
 
-        mConversationListView = (ListView) view.findViewById(R.id.conversation_list);
+        ListView mConversationListView = (ListView) view.findViewById(R.id.conversation_list);
         mConversations = EMClient.getInstance().chatManager().getAllConversations();
 
         mConversationUserNames = new ArrayList<>();
@@ -146,17 +130,11 @@ public class ConversationFragment extends Fragment {
             }
             lastMessage.setText(lastMessageText);
 
-            SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+            SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm", Locale.US);
             String times = format.format(new Date(message.getMsgTime()));
 
             date.setText(times);
             return convertView;
         }
-
-        public void addData(String username, String message) {
-
-            notifyDataSetChanged();
-        }
-
     }
 }

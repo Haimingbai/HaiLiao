@@ -1,30 +1,35 @@
 package com.zhangmiao.hailiao.UI;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Message;
 import android.provider.MediaStore;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
@@ -33,17 +38,22 @@ import com.hyphenate.chat.EMFileMessageBody;
 import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
-import com.hyphenate.easeui.EaseConstant;
+import com.hyphenate.chat.EMVideoMessageBody;
+import com.hyphenate.chat.EMVoiceMessageBody;
+import com.hyphenate.chat.adapter.message.EMAVoiceMessageBody;
+import com.hyphenate.easeui.controller.EaseUI;
 import com.hyphenate.easeui.model.EaseImageCache;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.easeui.utils.EaseImageUtils;
+import com.zhangmiao.hailiao.AudioRecoderUtils;
 import com.zhangmiao.hailiao.R;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
+/*
  * Created by zhangmiao on 2017/2/27.
  */
 public class ChatActivity extends Activity {
@@ -55,7 +65,11 @@ public class ChatActivity extends Activity {
     List<String> EMMessageBody;
     List<EMMessage> emMessages;
     ChatMessageListAdapter adapter;
-    private Button mChatSendPhoto;
+    TableLayout mTableLayout;
+    MediaPlayer mediaPlayer;
+    MediaRecorder recorder;
+
+    private AudioRecoderUtils mAudioRecoderUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +80,7 @@ public class ChatActivity extends Activity {
         ListView mChatMessageList = (ListView) findViewById(R.id.chat_message_list);
         mChatSendMessage = (EditText) findViewById(R.id.chat_send_message);
         Button mChatSendButton = (Button) findViewById(R.id.chat_send_button);
+        mTableLayout = (TableLayout) findViewById(R.id.chat_table_layout);
 
         Intent intent = getIntent();
         friendName = intent.getStringExtra("friendname");
@@ -73,8 +88,21 @@ public class ChatActivity extends Activity {
         mFriendName.setText(friendName);
         mChatSendButton.setOnClickListener(sendListener);
 
-        mChatSendPhoto = (Button) findViewById(R.id.chat_send_photo);
-        mChatSendPhoto.setOnClickListener(sendPhotoListener);
+        Button chatSendMore = (Button) findViewById(R.id.chat_send_more);
+        chatSendMore.setOnClickListener(sendMoreListener);
+
+        LinearLayout chatSendPhoto = (LinearLayout) findViewById(R.id.chat_send_photo);
+        LinearLayout chatSendVideo = (LinearLayout) findViewById(R.id.chat_send_video);
+        LinearLayout chatSendVoice = (LinearLayout) findViewById(R.id.chat_send_voice);
+        chatSendPhoto.setOnClickListener(sendPhotoListener);
+        chatSendVideo.setOnClickListener(sendVideoListener);
+        chatSendVoice.setOnClickListener(sendVoiceListener);
+        chatSendVoice.setOnTouchListener(sendVoiceTouchListener);
+
+        recorder = new MediaRecorder();
+
+        mAudioRecoderUtils = new AudioRecoderUtils();
+        mAudioRecoderUtils.setOnAudioStatusUpdateListener(audioStatusUpdateListener);
 
         EMMessageUserName = new ArrayList<>();
         EMMessageBody = new ArrayList<>();
@@ -99,6 +127,39 @@ public class ChatActivity extends Activity {
         }
         adapter = new ChatMessageListAdapter(this);
         mChatMessageList.setAdapter(adapter);
+        mChatMessageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                EMMessage message = emMessages.get(position);
+                switch (message.getType()) {
+                    case TXT:
+                        break;
+                    case IMAGE:
+                        break;
+                    case VOICE:
+                        EMVoiceMessageBody body = (EMVoiceMessageBody) message.getBody();
+                        String filePath = body.getLocalUrl();
+
+                        if (!(new File(filePath).exists())) {
+                            Log.e("test", "!(new File(filePath).exists())");
+                            return;
+                        }
+                        try {
+                            MediaPlayer mediaPlayer = new MediaPlayer();
+                            mediaPlayer.setDataSource(filePath);
+                            mediaPlayer.prepare();
+                            mediaPlayer.start();
+                        } catch (Exception e) {
+                            System.out.println();
+                        }
+                        break;
+                    default:
+                        Toast.makeText(ChatActivity.this, "message = " + message.toString(), Toast.LENGTH_SHORT);
+                        break;
+                }
+            }
+        });
+
     }
 
     private View.OnClickListener sendListener = new View.OnClickListener() {
@@ -108,8 +169,18 @@ public class ChatActivity extends Activity {
             EMMessage message = EMMessage.createTxtSendMessage(content, friendName);
             EMClient.getInstance().chatManager().sendMessage(message);
             mChatSendMessage.setText("");
-            //adapter.addData(EMClient.getInstance().getCurrentUser(), content);
             adapter.addData(EMClient.getInstance().getCurrentUser(), message);
+        }
+    };
+
+    private View.OnClickListener sendMoreListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mTableLayout.getVisibility() == View.VISIBLE) {
+                mTableLayout.setVisibility(View.GONE);
+            } else {
+                mTableLayout.setVisibility(View.VISIBLE);
+            }
         }
     };
 
@@ -119,6 +190,74 @@ public class ChatActivity extends Activity {
             Intent picture = new Intent(Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(picture, 3);
+        }
+    };
+
+    private AudioRecoderUtils.OnAudioStatusUpdateListener audioStatusUpdateListener = new AudioRecoderUtils.OnAudioStatusUpdateListener() {
+        @Override
+        public void onUpdate(double db, long time) {
+            Toast.makeText(ChatActivity.this, "录音时长：" + time, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onStop(String filePath, int time) {
+            Toast.makeText(ChatActivity.this, "录音保存在：" + filePath, Toast.LENGTH_SHORT).show();
+            Log.e("test", "time = " + time);
+            EMMessage message = EMMessage.createVoiceSendMessage(filePath, time, friendName);
+            EMClient.getInstance().chatManager().sendMessage(message);
+            adapter.addData(EMClient.getInstance().getCurrentUser(), message);
+        }
+    };
+
+    private View.OnClickListener sendVoiceListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
+
+    private View.OnTouchListener sendVoiceTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    Toast.makeText(ChatActivity.this, "正在录音，松开保存", Toast.LENGTH_SHORT).show();
+                    //mAudioRecoderUtils.startRecord();
+                    if(recorder == null)
+                    {
+                        recorder = new MediaRecorder();
+                    }
+                    recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                    recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+                    String filePath = Environment.getExternalStorageDirectory() + "/record/" + System.currentTimeMillis() + ".amr";
+                    recorder.setOutputFile(filePath);
+                    recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                    try {
+                        recorder.prepare();
+                    } catch (IOException e) {
+                        Log.e("test","recorder.prepare() failed");
+                    }
+
+                    break;
+                case MotionEvent.ACTION_UP:
+                    Toast.makeText(ChatActivity.this, "录音完成", Toast.LENGTH_SHORT).show();
+                    //mAudioRecoderUtils.stopRecord();
+                    recorder.stop();
+                    recorder.reset();
+                    recorder.release();
+                    recorder = null;
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+    };
+
+    private View.OnClickListener sendVideoListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
         }
     };
 
@@ -135,7 +274,6 @@ public class ChatActivity extends Activity {
             String path = cursor.getString(column_index);
             EMMessage message = EMMessage.createImageSendMessage(path, false, friendName);
             EMClient.getInstance().chatManager().sendMessage(message);
-            //adapter.addData(EMClient.getInstance().getCurrentUser(), message.getBody().toString());
             adapter.addData(EMClient.getInstance().getCurrentUser(), message);
         }
     }
@@ -146,9 +284,8 @@ public class ChatActivity extends Activity {
             Log.e("test", "收到消息");
             for (int i = 0; i < list.size(); i++) {
                 EMMessage emMessage = list.get(i);
-                String body = emMessage.getBody().toString();
-                //adapter.addData(emMessage.getFrom(), body);
                 adapter.addData(emMessage.getFrom(), emMessage);
+                adapter.notifyAll();
             }
         }
 
@@ -212,12 +349,14 @@ public class ChatActivity extends Activity {
             TextView userName;
             TextView conversation_text;
             ImageView conversation_image;
+            ImageView conversation_video;
             if (convertView == null) {
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.chat_message_item, null);
             }
             userName = (TextView) convertView.findViewById(R.id.message_item_user_name);
             conversation_text = (TextView) convertView.findViewById(R.id.message_item_conversation_text);
             conversation_image = (ImageView) convertView.findViewById(R.id.message_item_conversation_image);
+            conversation_video = (ImageView) convertView.findViewById(R.id.message_item_conversation_video);
             userName.setText(EMMessageUserName.get(position));
 
             final EMMessage msg = emMessages.get(position);
@@ -231,6 +370,7 @@ public class ChatActivity extends Activity {
                     conversation_text.setVisibility(View.INVISIBLE);
                     conversation_image.setVisibility(View.VISIBLE);
                     EMImageMessageBody body = (EMImageMessageBody) msg.getBody();
+
                     if (new File(body.getLocalUrl()).exists()) {
                         Bitmap bitmap = BitmapFactory.decodeFile(body.getLocalUrl());
                         int width = bitmap.getWidth();
@@ -250,7 +390,7 @@ public class ChatActivity extends Activity {
                                 || body.thumbnailDownloadStatus() ==
                                 EMFileMessageBody.EMDownloadStatus.PENDING
                                 ) {
-                            Log.e("test", "if ...");
+                            conversation_image.setImageResource(R.mipmap.ic_launcher);
                         } else {
                             String thumbPath = body.thumbnailLocalPath();
                             if (!new File(thumbPath).exists()) {
@@ -260,12 +400,16 @@ public class ChatActivity extends Activity {
                         }
                         String filePath = body.getLocalUrl();
                         String thumbPath = EaseImageUtils.getThumbnailImagePath(body.getLocalUrl());
-
                         showImageView(body, thumbPath, conversation_image, filePath, msg);
                     }
                     break;
+
+                case VOICE:
+                    conversation_text.setVisibility(View.INVISIBLE);
+                    conversation_video.setVisibility(View.VISIBLE);
+                    break;
                 default:
-                    String defaultMessage = ((EMTextMessageBody) msg.getBody()).getMessage();
+                    String defaultMessage = msg.toString();
                     conversation_text.setText(defaultMessage);
                     break;
             }
@@ -279,7 +423,6 @@ public class ChatActivity extends Activity {
                 return true;
             } else {
                 new AsyncTask<Object, Void, Bitmap>() {
-
                     @Override
                     protected Bitmap doInBackground(Object... params) {
                         File file = new File(thumbernailPath);
@@ -323,18 +466,6 @@ public class ChatActivity extends Activity {
             return true;
         }
 
-        public void addData(String username, String message) {
-            if (EMMessageUserName == null) {
-                EMMessageUserName = new ArrayList<>();
-            }
-            EMMessageUserName.add(username);
-            if (EMMessageBody == null) {
-                EMMessageBody = new ArrayList<>();
-            }
-            EMMessageBody.add(message);
-            notifyDataSetChanged();
-        }
-
         public void addData(String username, EMMessage message) {
             if (EMMessageUserName == null) {
                 EMMessageUserName = new ArrayList<>();
@@ -348,5 +479,4 @@ public class ChatActivity extends Activity {
         }
 
     }
-
 }

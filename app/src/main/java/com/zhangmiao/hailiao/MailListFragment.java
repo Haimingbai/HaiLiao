@@ -1,9 +1,6 @@
 package com.zhangmiao.hailiao;
 
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
+/*
  * Created by zhangmiao on 2017/2/24.
  */
 public class MailListFragment extends Fragment {

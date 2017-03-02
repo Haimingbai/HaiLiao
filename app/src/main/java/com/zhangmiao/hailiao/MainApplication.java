@@ -7,7 +7,7 @@ import android.support.multidex.MultiDex;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 
-/**
+/*
  * Created by zhangmiao on 2017/2/23.
  */
 public class MainApplication extends Application {

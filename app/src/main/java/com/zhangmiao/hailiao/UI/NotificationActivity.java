@@ -11,7 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
@@ -21,23 +20,21 @@ import com.zhangmiao.hailiao.R;
 import java.util.ArrayList;
 import java.util.Map;
 
-/**
+/*
  * Created by zhangmiao on 2017/2/27.
  */
 public class NotificationActivity extends Activity {
 
-    private ListView mNotificationListView;
     ArrayList<Map<String, String>> mNotificationDataList = MailListFragment.sNotification;
-    private NotificationListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
 
-        mNotificationListView = (ListView) findViewById(R.id.notification_list);
+        ListView mNotificationListView = (ListView) findViewById(R.id.notification_list);
 
-        adapter = new NotificationListAdapter(this, R.layout.notification_item);
+        NotificationListAdapter adapter = new NotificationListAdapter(this, R.layout.notification_item);
         mNotificationListView.setAdapter(adapter);
     }
 
@@ -115,16 +112,8 @@ public class NotificationActivity extends Activity {
                     public void onClick(View v) {
                         try {
                             EMClient.getInstance().contactManager().declineInvitation(userName);
-                            Toast.makeText(NotificationActivity.this,
-                                    "拒绝好友请求成功",
-                                    Toast.LENGTH_SHORT
-                            );
                         } catch (HyphenateException e) {
                             e.printStackTrace();
-                            Toast.makeText(NotificationActivity.this,
-                                    "拒绝好友请求失败",
-                                    Toast.LENGTH_SHORT
-                            );
                         }
                     }
                 });

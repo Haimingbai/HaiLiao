@@ -13,7 +13,7 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.zhangmiao.hailiao.R;
 
-/**
+/*
  * Created by zhangmiao on 2017/2/23.
  */
 public class RegisterActivity extends Activity {
@@ -62,7 +62,7 @@ public class RegisterActivity extends Activity {
                     } catch (HyphenateException e) {
                         e.printStackTrace();
                         Log.e("test", "register fail e " + e.toString() + " " + e.getErrorCode() + " " + e.getDescription());
-                        Toast.makeText(RegisterActivity.this, "注册失败，原因是：" + e.toString(), Toast.LENGTH_SHORT);
+                        Toast.makeText(RegisterActivity.this, "注册失败，原因是：" + e.toString(), Toast.LENGTH_SHORT).show();
                     }
 
                 }

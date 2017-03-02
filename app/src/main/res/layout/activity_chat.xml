@@ -26,7 +26,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/chat_send_photo"
+            android:id="@+id/chat_send_more"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:text="+" />
@@ -46,4 +46,78 @@
             android:text="发送" />
 
     </LinearLayout>
+
+    <TableLayout
+        android:id="@+id/chat_table_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1,2,3,4"
+        android:visibility="gone">
+
+        <TableRow>
+
+            <LinearLayout
+                android:id="@+id/chat_send_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:orientation="vertical"
+                android:padding="3dip">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="图片" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/chat_send_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="3dip">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="视频" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/chat_send_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="3dip">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="语音" />
+            </LinearLayout>
+        </TableRow>
+
+    </TableLayout>
+
 </LinearLayout>

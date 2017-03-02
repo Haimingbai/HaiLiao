@@ -9,12 +9,17 @@
         android:id="@+id/message_item_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:textColor="@color/colorPrimary" />
 
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin">
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:layout_gravity="center"
+        >
 
         <TextView
             android:id="@+id/message_item_conversation_text"
@@ -26,6 +31,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible" />
+        <ImageView
+            android:id="@+id/message_item_conversation_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ease_chatfrom_voice_playing"
+            android:visibility="gone"/>
     </FrameLayout>
 
 </LinearLayout>

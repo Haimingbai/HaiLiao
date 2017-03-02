@@ -12,7 +12,7 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.zhangmiao.hailiao.R;
 
-/**
+/*
  * Created by zhangmiao on 2017/2/24.
  */
 public class AddFriendActivity extends Activity {
